@@ -6,7 +6,6 @@ import { config as loadEnv } from "dotenv";
 import Fastify from "fastify";
 import cors from "@fastify/cors";
 import websocket from "@fastify/websocket";
-import fastifyStatic from "@fastify/static";
 import { z } from "zod";
 import { createMission, retryMission } from "./orchestrator.js";
 import { subscribe } from "./events.js";
@@ -57,8 +56,14 @@ async function main() {
     if (!parsed.success) {
       return reply.code(400).send({ error: parsed.error.flatten() });
     }
-    const mission = await createMission(parsed.data);
-    return reply.code(201).send({ mission });
+    try {
+      const mission = await createMission(parsed.data);
+      return reply.code(201).send({ mission });
+    } catch (err) {
+      req.log.error(err);
+      const message = err instanceof Error ? err.message : "Failed to create mission";
+      return reply.code(500).send({ error: message });
+    }
   });
 
   app.post<{ Params: { id: string } }>("/api/missions/:id/retry", async (req, reply) => {
@@ -116,15 +121,19 @@ async function main() {
     });
   });
 
-  // Production: serve the Vite build from the same server (one free Render service)
-  const webDist = path.join(root, "apps/web/dist");
-  if (existsSync(webDist)) {
+  // Production only: serve Vite build (keeps @fastify/static out of local `npm run dev`)
+  if (isProd) {
+    const webDist = path.join(root, "apps/web/dist");
+    if (!existsSync(webDist)) {
+      throw new Error(`Web build missing at ${webDist}. Run npm run build first.`);
+    }
+    const { default: fastifyStatic } = await import("@fastify/static");
     await app.register(fastifyStatic, {
       root: webDist,
       wildcard: false,
     });
     app.setNotFoundHandler((req, reply) => {
-      if (req.url.startsWith("/api") || req.url.startsWith("/api/ws")) {
+      if (req.url.startsWith("/api")) {
         return reply.code(404).send({ error: "Not found" });
       }
       return reply.sendFile("index.html");
