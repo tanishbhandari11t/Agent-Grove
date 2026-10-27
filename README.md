@@ -86,7 +86,7 @@ One Web Service. Frontend + API + WebSockets. One URL. One bill (zero dollars, w
 | Setting | Value |
 |---------|--------|
 | Runtime | Node |
-| Build | `npm install && npm run build` |
+| Build | `npm install --include=dev && npm run build` |
 | Start | `npm start` |
 | Plan | Free |
 
