@@ -15,8 +15,9 @@ import { hasOpenRouterKey } from "./openrouter.js";
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../..");
 loadEnv({ path: path.join(root, ".env") });
 
-const isProd = process.env.NODE_ENV === "production";
+const isProd = process.env.NODE_ENV === "production" || Boolean(process.env.RENDER);
 const PORT = Number(process.env.PORT || 8787);
+// Render (and most hosts) require 0.0.0.0 — binding 127.0.0.1 passes local health checks but fails port scan
 const HOST = process.env.HOST || (isProd ? "0.0.0.0" : "127.0.0.1");
 const CORS_ORIGIN = process.env.CORS_ORIGIN || (isProd ? true : "http://localhost:5173");
 
