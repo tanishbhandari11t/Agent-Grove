@@ -1,77 +1,96 @@
 # Agent Grove
 
-A pixel-office AI workspace: assign research missions, watch specialized agents work in a live office, and save reports in Inbox (with PDF export).
+### The office where tiny pixel people do your research so you don't have to pretend you "googled it thoroughly."
 
-Built with React + Fastify + OpenRouter. Office art/characters adapted from [Pixel Agents](https://github.com/pixel-agents-hq/pixel-agents) (MIT).
+Welcome to **Agent Grove** — a full-stack pixel office where you play Manager, assign a mission, and watch a crew of specialized AI agents scramble to their desks like it's Monday and the coffee just kicked in.
 
-## What it does
+Built with React + Fastify + OpenRouter.  
+Office vibes & characters adapted from [Pixel Agents](https://github.com/pixel-agents-hq/pixel-agents) (MIT). Thank you, tiny legends.
 
-1. Open the office and move the **Manager** with WASD.
-2. Assign a research mission.
-3. Agents run through OpenRouter: Planner → Scout → Analyst → Inspector → Scribe.
-4. Live WebSocket updates animate agent state.
-5. Finished reports land in **Inbox** (export as PDF).
+---
 
-## Local setup
+## Why does this exist?
+
+Because watching a progress spinner is boring.  
+Watching five agents *walk to chairs*, *type furiously*, and *deliver a report to your inbox* is… slightly more honest about how group projects feel.
+
+Also: research → analysis → QA → write-up, but with WASD.
+
+---
+
+## The loop (aka “how work happens here”)
+
+1. **You** — strut around the office with **WASD** (don't worry, typing in forms still works; the keyboard knows the difference between "boss walking" and "boss writing").
+2. **Assign work** — drop a research mission on the board.
+3. **The crew** gets hired for one job:
+
+| Agent | Job title (on their LinkedIn) | Actually does |
+|-------|-------------------------------|---------------|
+| **Planner** | Professional Overthinker | Turns your prompt into a plan |
+| **Scout** | Professional Googler™ | Gathers findings |
+| **Analyst** | Spreadsheet Whisperer | Compares, scores, recommends |
+| **Inspector** | Professional Buzzkill | Quality check before you look silly |
+| **Scribe** | The One Who Writes The Thing | Final Markdown report |
+
+4. Live **WebSocket** updates keep the office moving (status bubbles, seating, delivery).
+5. Finished reports land in **Inbox**. Export to **PDF** when you want to look professional in a meeting you forgot about.
+
+No API key? Fine. **Demo mode** still runs the whole office drama with placeholder reports. The vibes stay intact.
+
+---
+
+## Stack (for humans who ask “is this full-stack?”)
+
+Yes.
+
+| Layer | Tech | Vibes |
+|-------|------|--------|
+| Web | React + Vite + TypeScript + Canvas | Pixel office, not another dashboard |
+| Server | Fastify + WebSocket + OpenRouter | Agents that actually talk to models |
+| Data | JSON file store | Simple. Charming. Don't sue us at scale |
+
+Monorepo: `apps/web`, `apps/server`, `packages/shared`.
+
+---
+
+## Local setup (5 minutes, fewer tears)
 
 ```bash
 cp .env.example .env
-# add your OPENROUTER_API_KEY
+# paste OPENROUTER_API_KEY like a responsible adult
 
 npm install
 npm run dev
 ```
 
-- Web: http://localhost:5173  
-- API: http://localhost:8787  
+- Web → http://localhost:5173  
+- API → http://localhost:8787  
 
-Without an API key, the app runs in **demo mode**.
+```bash
+npm run build   # shared + server + web
+npm start       # production server (serves the built UI too)
+```
 
-## Agents
+**Hot tip:** never commit `.env`. The internet does not need your API key as a souvenir.
 
-| Agent     | Role                         |
-|-----------|------------------------------|
-| Planner   | Task plan                    |
-| Scout     | Research findings            |
-| Analyst   | Comparison + recommendation  |
-| Inspector | Quality check                |
-| Scribe    | Final Markdown report        |
-
-## Stack
-
-- **Web** — React + Vite + TypeScript + Canvas office  
-- **Server** — Fastify + WebSocket + OpenRouter  
-- **Data** — JSON file store on the server  
+---
 
 ## Deploy free (recommended: Render)
 
-Easiest free option for this project: **one Render Web Service** (frontend + API + WebSocket together).
+One Web Service. Frontend + API + WebSockets. One URL. One bill (zero dollars, with a nap timer).
 
-### 1. Push to GitHub
-
-```bash
-git init
-git add .
-git commit -m "Initial commit: Agent Grove full-stack office"
-git branch -M main
-git remote add origin https://github.com/tanishbhandari11t/Agent-Grove.git
-git push -u origin main
-```
-
-### 2. Create a Render Web Service
-
-1. Go to [https://render.com](https://render.com) → sign up with GitHub  
-2. **New → Web Service** → select `Agent-Grove`  
+1. Push this repo to GitHub.
+2. [render.com](https://render.com) → **New → Web Service** → select this repo.
 3. Settings:
 
-| Setting        | Value |
-|----------------|-------|
-| Runtime        | Node |
-| Build Command  | `npm install && npm run build` |
-| Start Command  | `npm start` |
-| Instance       | Free |
+| Setting | Value |
+|---------|--------|
+| Runtime | Node |
+| Build | `npm install && npm run build` |
+| Start | `npm start` |
+| Plan | Free |
 
-4. Environment variables:
+4. Env vars worth setting:
 
 | Key | Value |
 |-----|--------|
@@ -79,29 +98,39 @@ git push -u origin main
 | `HOST` | `0.0.0.0` |
 | `OPENROUTER_API_KEY` | your key |
 | `OPENROUTER_MODEL` | `openai/gpt-4o-mini` |
-| `OPENROUTER_SITE_URL` | your Render URL (after first deploy) |
 | `OPENROUTER_APP_NAME` | `Agent Grove` |
-| `CORS_ORIGIN` | your Render URL (same origin is fine) |
+| `CORS_ORIGIN` | your Render URL |
+| `OPENROUTER_SITE_URL` | same Render URL |
 
-5. Deploy → open the Render URL.
+Free Render apps sleep when idle. First visit after a nap: ~30–60s of “hello…? anyone home?”
 
-> Free Render services sleep after idle time; the first request can take ~30–60s to wake.
+Also fine: **Railway**, **Fly.io**.  
+**Vercel alone** is for the frontend cosplay — you still need a Node home for the API.
 
-### Other free options
+---
 
-| Host | Use for | Notes |
-|------|---------|--------|
-| **Render** | Full app (best fit) | WebSockets OK on free web service |
-| **Railway** | Full app | Free credits; easy Node deploy |
-| **Fly.io** | Full app | Free allowance; Docker/Node |
-| **Vercel** | Frontend only | Pair with Render API if split |
+## Controls & etiquette
 
-Do **not** put `OPENROUTER_API_KEY` in the frontend or commit `.env`.
+- **WASD** — Manager stroll  
+- **Assign work** — give the office something to panic about  
+- **Inbox** — collect finished reports (and PDFs)  
+- Be nice to the Inspector. They're just doing their job.
 
-## Scripts
+---
 
-```bash
-npm run dev      # local web + API
-npm run build    # build shared + server + web
-npm start        # run production server (serves web dist too)
-```
+## Credits & honesty corner
+
+- Pixel office art/characters from [Pixel Agents](https://github.com/pixel-agents-hq/pixel-agents) (MIT).  
+- Models via [OpenRouter](https://openrouter.ai/).  
+- Any resemblance to a real workplace is intentional and slightly concerning.
+
+---
+
+## License vibe
+
+Use it. Learn from it. Deploy it for your end-term.  
+Just don't commit secrets, and please feed the agents actual API credits if you want real answers instead of demo mode theater.
+
+---
+
+*Agent Grove — where research looks like a game, and the game looks suspiciously like work.*
