@@ -1,0 +1,1 @@
+{"root":["./src/app.tsx","./src/api.ts","./src/exportpdf.ts","./src/main.tsx","./src/uselivestore.ts","./src/vite-env.d.ts","./src/components/missiondock.tsx","./src/components/officegame.tsx","./src/office/sprites.ts","./src/office/world.ts"],"errors":true,"version":"5.9.3"}

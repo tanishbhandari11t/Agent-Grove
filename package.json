@@ -1,0 +1,22 @@
+{
+  "name": "agent-grove",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Pixel office workspace powered by OpenRouter agents",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "concurrently -n server,web -c cyan,magenta \"npm run dev -w @agent-grove/server\" \"npm run dev -w @agent-grove/web\"",
+    "build": "npm run build -w @agent-grove/shared && npm run build -w @agent-grove/server && npm run build -w @agent-grove/web",
+    "start": "npm run start -w @agent-grove/server"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1",
+    "typescript": "^5.9.3"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
